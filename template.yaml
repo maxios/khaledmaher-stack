@@ -2,32 +2,13 @@ AWSTemplateFormatVersion: 2010-09-09
 Transform: AWS::Serverless-2016-10-31
 Description: Stackery Serverless API Example Stack
 Resources:
-  api:
-    Type: AWS::Serverless::Api
-    Properties:
-      Name: !Sub
-        - ${ResourceName} From Stackery Stack ${StackeryStackTagName} Environment ${StackeryEnvironmentTagName}
-        - ResourceName: api
-      StageName: !Ref StackeryEnvironmentAPIGatewayStageName
-      DefinitionBody:
-        swagger: '2.0'
-        info: {}
-        paths:
-          /:
-            get:
-              x-amazon-apigateway-integration:
-                httpMethod: POST
-                type: aws_proxy
-                uri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${getWelcomePage.Arn}/invocations
-              responses: {}
-      EndpointConfiguration: REGIONAL
-  getWelcomePage:
+  khaledmaherDeployPages:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: !Sub ${AWS::StackName}-getWelcomePage
+      FunctionName: !Sub ${AWS::StackName}-khaledmaherDeployPages
       Description: !Sub
         - Stackery Stack ${StackeryStackTagName} Environment ${StackeryEnvironmentTagName} Function ${ResourceName}
-        - ResourceName: getWelcomePage
+        - ResourceName: khaledmaherDeployPages
       CodeUri: src/getWelcomePage
       Handler: index.handler
       Runtime: nodejs12.x
@@ -37,14 +18,29 @@ Resources:
       Policies:
         - AWSXrayWriteOnlyAccess
       Events:
-        apiGET:
-          Type: Api
+        HttpApiPOSTkhaledmahergithubactionswebhook:
+          Type: HttpApi
           Properties:
-            Path: /
-            Method: GET
-            RestApiId: !Ref api
+            Path: /khaledmaher/github/actions/webhook
+            Method: POST
+            ApiId: !Ref HttpApi
+            PayloadFormatVersion: '2.0'
+            TimeoutInMillis: 29000
     Metadata:
       StackeryName: getWelcomePage
+  HttpApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      DefinitionBody:
+        openapi: '3.0'
+        info:
+          title: !Sub ${AWS::StackName}-HttpApi
+          version: '1.0'
+        paths:
+          /khaledmaher/github/actions/webhook:
+            post:
+              responses: {}
+      FailOnWarnings: true
 Parameters:
   StackeryStackTagName:
     Type: String
@@ -52,6 +48,3 @@ Parameters:
   StackeryEnvironmentTagName:
     Type: String
     Description: Environment Name (injected by Stackery at deployment time)
-  StackeryEnvironmentAPIGatewayStageName:
-    Type: String
-    Description: Environment name used for API Gateway Stage names (injected by Stackery at deployment time)
