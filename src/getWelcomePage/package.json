@@ -1,4 +1,5 @@
 {
+  "name": "deploy_pages",
   "private": true,
   "dependencies": {
     "aws-sdk": "~2"
