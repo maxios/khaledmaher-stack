@@ -26,6 +26,9 @@ Resources:
             ApiId: !Ref HttpApi
             PayloadFormatVersion: '2.0'
             TimeoutInMillis: 29000
+      Environment:
+        Variables:
+          WORKFLOW_ID: '1856075'
     Metadata:
       StackeryName: getWelcomePage
   HttpApi:
