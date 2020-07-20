@@ -25,8 +25,7 @@ exports.handler = (event, context, callback) => {
           statusCode: 200,
           headers: {
             'Content-Type': 'text/html'
-          },
-          body: res
+          }
         };
 
         return callback(null, response)
